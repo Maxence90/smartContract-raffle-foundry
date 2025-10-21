@@ -3,7 +3,9 @@
 pragma solidity ^0.8.30;
 
 import {VRFConsumerBaseV2Plus} from "lib/chainlink-evm/contracts/src/v0.8/vrf/dev/VRFConsumerBaseV2Plus.sol";
-import {VRFCoordinatorV2Interface} from "lib/chainlink-evm/contracts/src/v0.8/vrf/interfaces/VRFCoordinatorV2Interface.sol";
+import {
+    VRFCoordinatorV2Interface
+} from "lib/chainlink-evm/contracts/src/v0.8/vrf/interfaces/VRFCoordinatorV2Interface.sol";
 
 /**
  * @title 一个抽奖合约
@@ -17,11 +19,7 @@ contract Raffle is VRFConsumerBaseV2Plus {
     error Raffle__NotEnoughtTime();
     error Raffle__TransferFailed();
     error Raffle__RaffleNotOpen();
-    error Raffle__UpkeepNotNeeded(
-        uint256 currentBalance,
-        uint256 numPlayers,
-        uint256 raffleState
-    );
+    error Raffle__UpkeepNotNeeded(uint256 currentBalance, uint256 numPlayers, uint256 raffleState);
 
     //Type declarations
     enum RaffleState {
@@ -98,7 +96,14 @@ contract Raffle is VRFConsumerBaseV2Plus {
 
     function checkUpKeep(
         bytes memory /*checkData*/
-    ) public view returns (bool upkeepNeeded, bytes memory /* performData */) {
+    )
+        public
+        view
+        returns (
+            bool upkeepNeeded,
+            bytes memory /* performData */
+        )
+    {
         bool timeHasPassed = (block.timestamp - s_lastTimeStamp) >= I_INTERVAL;
         bool isOpen = RaffleState.OPEN == s_raffState;
         bool hasBalance = address(this).balance > 0;
@@ -107,31 +112,31 @@ contract Raffle is VRFConsumerBaseV2Plus {
         return (upkeepNeeded, "0x0");
     }
 
-    function performUpkeep(bytes calldata /* performData */) external {
-        (bool upkeepNeeded, ) = checkUpKeep("");
+    function performUpkeep(
+        bytes calldata /* performData */
+    )
+        external
+    {
+        (bool upkeepNeeded,) = checkUpKeep("");
         if (!upkeepNeeded) {
-            revert Raffle__UpkeepNotNeeded(
-                address(this).balance,
-                s_players.length,
-                uint256(s_raffState)
-            );
+            revert Raffle__UpkeepNotNeeded(address(this).balance, s_players.length, uint256(s_raffState));
         }
 
         s_raffState = RaffleState.CALCULATING;
         uint256 requestId = I_VRF_COORDINATOR.requestRandomWords(
-            I_GAS_LANE,
-            I_SUBSCRIPTION_ID,
-            REQUEST_CONFIRMATION,
-            I_CALLBACK_GAS_LIMIT,
-            NUM_WORDS
+            I_GAS_LANE, I_SUBSCRIPTION_ID, REQUEST_CONFIRMATION, I_CALLBACK_GAS_LIMIT, NUM_WORDS
         );
         emit RequestRaffleWinner(requestId); //是没必要的，因为接口中包含了这个事件
     }
 
     function fulfillRandomWords(
-        uint256 /*requestId*/,
+        uint256,
+        /*requestId*/
         uint256[] calldata randomWords
-    ) internal override {
+    )
+        internal
+        override
+    {
         // Checks
         // Effects (我们对合约的影响)
         uint256 indexOfWinner = randomWords[0] % s_players.length;
@@ -144,7 +149,7 @@ contract Raffle is VRFConsumerBaseV2Plus {
 
         emit WinnerPicked(winner);
         // Interaction(与其他合约交互)
-        (bool success, ) = winner.call{value: address(this).balance}("");
+        (bool success,) = winner.call{value: address(this).balance}("");
         if (!success) {
             revert Raffle__TransferFailed();
         }

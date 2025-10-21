@@ -6,6 +6,7 @@ import {HelpConfig} from "./HelpConfig.s.sol";
 import {CreateSubscription, FundSubscription, AddConsumer} from "./Interactions.s.sol";
 
 pragma solidity ^0.8.30;
+
 contract DeployRaffle is Script {
     function run() external returns (Raffle, HelpConfig) {
         HelpConfig helpConfig = new HelpConfig();
@@ -22,10 +23,7 @@ contract DeployRaffle is Script {
 
         if (subscripitionId == 0) {
             CreateSubscription createSubscription = new CreateSubscription();
-            subscripitionId = createSubscription.createSubscription(
-                vrfCoordinator,
-                deployerKey
-            );
+            subscripitionId = createSubscription.createSubscription(vrfCoordinator, deployerKey);
 
             //Fund it
             FundSubscription fundSubscription = new FundSubscription();
@@ -34,19 +32,12 @@ contract DeployRaffle is Script {
 
         vm.startBroadcast();
         Raffle raffle = new Raffle(
-            entranceFee,
-            interval,
-            vrfCoordinator,
-            gasLane,
-            subscripitionId,
-            callbackGasLimit,
-            link,
-            deployerKey
+            entranceFee, interval, vrfCoordinator, gasLane, subscripitionId, callbackGasLimit, link, deployerKey
         );
         vm.stopBroadcast();
 
         AddConsumer addConsumer = new AddConsumer();
-        addConsumer.addConsume(address(raffle), vrfCoordinator, subscripitionId, deployerKey);//将当前raffle的部署地址传入到消费者中，以保证该地址能调用里面的资金
+        addConsumer.addConsume(address(raffle), vrfCoordinator, subscripitionId, deployerKey); //将当前raffle的部署地址传入到消费者中，以保证该地址能调用里面的资金
 
         return (raffle, helpConfig);
     }

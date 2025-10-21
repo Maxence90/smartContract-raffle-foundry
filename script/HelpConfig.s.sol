@@ -18,8 +18,7 @@ contract HelpConfig is Script {
         uint256 deployerKey;
     }
 
-    uint256 public constant DEFAULT_ANVIL_KEY =
-        0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80;
+    uint256 public constant DEFAULT_ANVIL_KEY = 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80;
     NetworkConfig public activeNetworkConfig;
 
     constructor() {
@@ -31,17 +30,16 @@ contract HelpConfig is Script {
     }
 
     function getSepoliaEthConfig() public view returns (NetworkConfig memory) {
-        return
-            NetworkConfig({
-                entranceFee: 0.01 ether,
-                interval: 30,
-                vrfCoordinator: 0x8103B0A8A00be2DDC778e6e7eaa21791Cd364625,
-                gasLane: 0x1770bdc7eec7771f7ba4ffd640f34260d7f095b79c92d34a5b2551d6f6cfd2be,
-                subscripitionId: 0,
-                callbackGasLimit: 500000,
-                link: 0x779877A7B0D9E8603169DdbD7836e478b4624789, //用于支付 VRF 服务的费用（link代币地址）
-                deployerKey: vm.envUint("PRIVATE_KEY")
-            });
+        return NetworkConfig({
+            entranceFee: 0.01 ether,
+            interval: 30,
+            vrfCoordinator: 0x8103B0A8A00be2DDC778e6e7eaa21791Cd364625,
+            gasLane: 0x1770bdc7eec7771f7ba4ffd640f34260d7f095b79c92d34a5b2551d6f6cfd2be,
+            subscripitionId: 0,
+            callbackGasLimit: 500000,
+            link: 0x779877A7B0D9E8603169DdbD7836e478b4624789, //用于支付 VRF 服务的费用（link代币地址）
+            deployerKey: vm.envUint("PRIVATE_KEY")
+        });
     }
 
     function getOrCreateAnvilEthConfig() public returns (NetworkConfig memory) {
@@ -53,24 +51,20 @@ contract HelpConfig is Script {
         uint96 gasPriceLink = 1e9;
 
         vm.startBroadcast();
-        VRFCoordinatorV2Mock vrfCoordinatorV2Mock = new VRFCoordinatorV2Mock(
-            baseFee,
-            gasPriceLink
-        );
+        VRFCoordinatorV2Mock vrfCoordinatorV2Mock = new VRFCoordinatorV2Mock(baseFee, gasPriceLink);
         LinkToken link = new LinkToken();
         vm.stopBroadcast();
 
-        return
-            NetworkConfig({
-                entranceFee: 0.01 ether,
-                interval: 30,
-                vrfCoordinator: address(vrfCoordinatorV2Mock),
-                gasLane: 0x1770bdc7eec7771f7ba4ffd640f34260d7f095b79c92d34a5b2551d6f6cfd2be,
-                subscripitionId: 0,
-                callbackGasLimit: 500000,
-                link: address(link),
-                deployerKey: DEFAULT_ANVIL_KEY
-            });
+        return NetworkConfig({
+            entranceFee: 0.01 ether,
+            interval: 30,
+            vrfCoordinator: address(vrfCoordinatorV2Mock),
+            gasLane: 0x1770bdc7eec7771f7ba4ffd640f34260d7f095b79c92d34a5b2551d6f6cfd2be,
+            subscripitionId: 0,
+            callbackGasLimit: 500000,
+            link: address(link),
+            deployerKey: DEFAULT_ANVIL_KEY
+        });
     }
 
     function getConfig() external view returns (NetworkConfig memory) {

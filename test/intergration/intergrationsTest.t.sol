@@ -28,12 +28,10 @@ contract intergrationsTest is Test {
     }
 
     function testAddConsumerRunSuccessful() public {
-        (, , , address[] memory consumers) = VRFCoordinatorV2Mock(
-            vrfCoordinator
-        ).getSubscription(subId);
+        (,,, address[] memory consumers) = VRFCoordinatorV2Mock(vrfCoordinator).getSubscription(subId);
 
         bool found = false;
-        for (uint i = 0; i < consumers.length; i++) {
+        for (uint256 i = 0; i < consumers.length; i++) {
             if (consumers[i] == address(raffle)) {
                 found = true;
                 break;

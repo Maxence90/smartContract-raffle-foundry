@@ -79,7 +79,7 @@ contract RaffleTest is Test {
         vm.roll(block.number + 1);
 
         //Act
-        (bool upkeepNeeded, ) = raffle.checkUpKeep("");
+        (bool upkeepNeeded,) = raffle.checkUpKeep("");
 
         //Assert
         assert(!upkeepNeeded);
@@ -98,17 +98,14 @@ contract RaffleTest is Test {
         raffle.performUpkeep("");
 
         //Act
-        (bool upkeepNeeded, ) = raffle.checkUpKeep("");
+        (bool upkeepNeeded,) = raffle.checkUpKeep("");
         assert(upkeepNeeded == false);
     }
 
     ////////////////////
     // performUpkeep  //
     ////////////////////
-    function testPerformUpkeepCanOnlyRunIfCheckUpkeepIsTrue()
-        public
-        nextRaffle
-    {
+    function testPerformUpkeepCanOnlyRunIfCheckUpkeepIsTrue() public nextRaffle {
         // Arrange
 
         //Act / assert
@@ -124,21 +121,13 @@ contract RaffleTest is Test {
 
         //Act / Assert
         vm.expectRevert(
-            abi.encodeWithSelector(
-                Raffle.Raffle__UpkeepNotNeeded.selector,
-                currentBalance,
-                numPlayers,
-                raffleState
-            )
+            abi.encodeWithSelector(Raffle.Raffle__UpkeepNotNeeded.selector, currentBalance, numPlayers, raffleState)
         );
         raffle.performUpkeep("");
     }
 
     //获得事件的输出
-    function testPerformUpkeepUpdatasRaffleStateAndEmitsRequestId()
-        public
-        nextRaffle
-    {
+    function testPerformUpkeepUpdatasRaffleStateAndEmitsRequestId() public nextRaffle {
         vm.recordLogs();
         raffle.performUpkeep(""); // emit requestId
         Vm.Log[] memory entries = vm.getRecordedLogs();
@@ -161,28 +150,19 @@ contract RaffleTest is Test {
         _;
     }
 
-    function testFulfillRandomWordsCanOnlyBeCalledAfterPerformUpkeep(
-        uint256 ramdomRequestId
-    ) public nextRaffle skipFork {
-        vm.expectRevert("nonexistent request");
-        VRFCoordinatorV2Mock(vrfCoordinator).fulfillRandomWords(
-            ramdomRequestId,
-            address(raffle)
-        );
-    }
-
-    function testFulfillRandomWordsPicksAWinnerResetAndSendsMoney()
+    function testFulfillRandomWordsCanOnlyBeCalledAfterPerformUpkeep(uint256 ramdomRequestId)
         public
         nextRaffle
         skipFork
     {
+        vm.expectRevert("nonexistent request");
+        VRFCoordinatorV2Mock(vrfCoordinator).fulfillRandomWords(ramdomRequestId, address(raffle));
+    }
+
+    function testFulfillRandomWordsPicksAWinnerResetAndSendsMoney() public nextRaffle skipFork {
         uint256 additionalEntrants = 5;
         uint256 startingIndex = 1;
-        for (
-            uint256 i = startingIndex;
-            i < startingIndex + additionalEntrants;
-            i++
-        ) {
+        for (uint256 i = startingIndex; i < startingIndex + additionalEntrants; i++) {
             address player = address(uint160(i));
             hoax(player, STARTING_USERING_BALANCE);
             console.log("userBalance", player.balance);
@@ -198,10 +178,7 @@ contract RaffleTest is Test {
 
         uint256 previousTimeStamp = raffle.getLastTimeStamp();
         //假装成Chainlink VRF来获取随机数，然后选出获胜者
-        VRFCoordinatorV2Mock(vrfCoordinator).fulfillRandomWords(
-            uint256(requestId),
-            address(raffle)
-        );
+        VRFCoordinatorV2Mock(vrfCoordinator).fulfillRandomWords(uint256(requestId), address(raffle));
 
         assert(uint256(raffle.getRaffleState()) == 0);
         assert(raffle.getRecentWinner() != address(0));
@@ -209,9 +186,6 @@ contract RaffleTest is Test {
         assert(previousTimeStamp < raffle.getLastTimeStamp());
         console.log("WinerBalance", raffle.getRecentWinner().balance);
         console.log("expectWinerBalance", STARTING_USERING_BALANCE + prize);
-        assert(
-            raffle.getRecentWinner().balance ==
-                STARTING_USERING_BALANCE + prize - entranceFee
-        );
+        assert(raffle.getRecentWinner().balance == STARTING_USERING_BALANCE + prize - entranceFee);
     }
 }
