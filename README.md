@@ -35,7 +35,7 @@
 ## 快速上手
 
 ```
-git clone https://github.com/Maxence90/smart-contract-lottery-foundry
+git clone https://github.com/Maxence90/smartContract-raffle-foundry
 cd smart-contract-lottery-foundry
 make
 ```
@@ -63,7 +63,7 @@ make deploy
 ```
 ## 部署-其他网络
 
-[请参见下方](#deployment-to-a-testnet-or-mainnet)
+[请参见下方](#部署到测试网或主网)
 
 ## 测试
 ```
