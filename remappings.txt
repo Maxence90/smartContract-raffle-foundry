@@ -1,0 +1,5 @@
+forge-std/=lib/forge-std/src/
+chainlink-evm/=lib/chainlink-evm/
+chainlink/=lib/chainlink/
+foundry-devops/=lib/foundry-devops/
+solady/=lib/solady/src/
