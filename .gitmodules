@@ -12,7 +12,7 @@
 	url = https://github.com/smartcontractkit/chainlink-evm
 [submodule "lib/solady"]
 	path = lib/solady
-	url = https://github.com/Vectorized/solady
+	url = https://github.com/vectorized/solady
 [submodule "lib/foundry-devops"]
 	path = lib/foundry-devops
 	url = https://github.com/Cyfrin/foundry-devops

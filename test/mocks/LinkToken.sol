@@ -12,7 +12,20 @@ contract LinkToken is ERC20 {
     uint256 constant INITIAL_SUPPLY = 1000000000000000000000000;
     uint8 constant DECIMALS = 18;
 
-    constructor() ERC20("LinkToken", "LINK", DECIMALS) {
+    function name() public pure override returns (string memory) {
+        return "LinkToken";
+    }
+
+    // 实现 ERC20 要求的 symbol() 函数
+    function symbol() public pure override returns (string memory) {
+        return "LINK";
+    }
+
+    // 实现 ERC20 要求的 decimals() 函数
+    function decimals() public pure override returns (uint8) {
+        return DECIMALS;
+    }
+    constructor(){
         _mint(msg.sender, INITIAL_SUPPLY);
     }
 
