@@ -5,7 +5,11 @@ pragma solidity ^0.8.30;
 import {ERC20} from "lib/solady/src/tokens/ERC20.sol";
 
 interface ERC677Receiver {
-    function onTokenTransfer(address _sender, uint256 _value, bytes memory _data) external;
+    function onTokenTransfer(
+        address _sender,
+        uint256 _value,
+        bytes memory _data
+    ) external;
 }
 
 contract LinkToken is ERC20 {
@@ -25,7 +29,8 @@ contract LinkToken is ERC20 {
     function decimals() public pure override returns (uint8) {
         return DECIMALS;
     }
-    constructor(){
+
+    constructor() {
         _mint(msg.sender, INITIAL_SUPPLY);
     }
 
@@ -33,7 +38,12 @@ contract LinkToken is ERC20 {
         _mint(to, value);
     }
 
-    event Transfer(address indexed from, address indexed to, uint256 value, bytes data);
+    event Transfer(
+        address indexed from,
+        address indexed to,
+        uint256 value,
+        bytes data
+    );
 
     /**
      * @dev transfer token to a contract address with additional data if the recipient is a contact.
@@ -41,7 +51,11 @@ contract LinkToken is ERC20 {
      * @param _value The amount to be transferred.
      * @param _data The extra data to be passed to the receiving contract.
      */
-    function transferAndCall(address _to, uint256 _value, bytes memory _data) public virtual returns (bool success) {
+    function transferAndCall(
+        address _to,
+        uint256 _value,
+        bytes memory _data
+    ) public virtual returns (bool success) {
         super.transfer(_to, _value);
         // emit Transfer(msg.sender, _to, _value, _data);
         emit Transfer(msg.sender, _to, _value, _data);
@@ -53,7 +67,11 @@ contract LinkToken is ERC20 {
 
     // PRIVATE
 
-    function contractFallback(address _to, uint256 _value, bytes memory _data) private {
+    function contractFallback(
+        address _to,
+        uint256 _value,
+        bytes memory _data
+    ) private {
         ERC677Receiver receiver = ERC677Receiver(_to);
         receiver.onTokenTransfer(msg.sender, _value, _data);
     }
