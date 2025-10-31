@@ -1,6 +1,7 @@
 # Foundry Smart Contract Lottery智能合约彩票
 
 # 简介
+[csdn对应心得链接](https://blog.csdn.net/2301_81272096/article/details/154178784?spm=1001.2014.3001.5502)
 
 这个项目允许消费者参与抽奖，智能合约接收ETH入场费，入场费不少于0.01 ether.我们将合约交给chainlink托管，每隔一段时间并且符合指定条件就会从Chainlink VRF来获取随机数，通过随机数从这段时间参与抽奖的消费者中选择一个winner，winner将获得合约中的所有余额。
 
